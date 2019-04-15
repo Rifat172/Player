@@ -6,12 +6,36 @@
         xmlns:local="clr-namespace:PlayerView"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <StackPanel Orientation="Vertical">
-        <TextBox Text="{Binding Path=SynchronizedText,
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Button Content="PlayButton" FontSize="20"/>
+
+            <StackPanel Grid.Column="1">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Label Content="first time: "/>
+                    <Label Grid.Column="1" Content="last time: "/>
+                </Grid>
+                <Label Content="text"/>
+                <Slider/>
+            </StackPanel>
+        </Grid>
+        <StackPanel Background="Black" Grid.Row="1">
+            <TextBlock Foreground="White" FontSize="30" Text="Введите путь к файлу"/>
+            <TextBox BorderBrush="Red" FontSize="20" Text="{Binding Path=SynchronizedText,
             UpdateSourceTrigger=PropertyChanged, 
             Mode=OneWayToSource}"/>
-        <TextBlock Text="{Binding Path=SynchronizedText, 
-            UpdateSourceTrigger=PropertyChanged, 
-            Mode=OneWay}"/>
-    </StackPanel>
+        </StackPanel>
+    </Grid>
 </Window>

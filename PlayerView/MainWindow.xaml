@@ -16,7 +16,14 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <Button Content="PlayButton" FontSize="20"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Button x:Name="StartBtn" Grid.Column="0" IsEnabled="{Binding IsFoundFile}" Command="{Binding SetBoolCommand}" Content="PlayButton" FontSize="20"/>
+                <Button Grid.Column="1" IsEnabled="{Binding ElementName=StartBtn, Path=IsEnabled}" Content="StopButton" FontSize="20"/>
+            </Grid>
 
             <StackPanel Grid.Column="1">
                 <Grid>

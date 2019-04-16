@@ -4,12 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace PlayerView.Model
 {
-    public class DateModel : BaseViewModel
+    public class DateModel
     {
         private string musicPath;
+        private bool isStartPlay;
 
         public string MusicPath
         {
@@ -17,8 +19,21 @@ namespace PlayerView.Model
             set
             {
                 musicPath = value;
-                OnPropertyChanged(nameof(MusicPath));
             }
+        }
+
+        public bool IsStartPlay
+        {
+            get => isStartPlay;
+            set
+            {
+                isStartPlay = value;
+            }
+        }
+
+        private void Initialization()
+        {
+
         }
     }
 }

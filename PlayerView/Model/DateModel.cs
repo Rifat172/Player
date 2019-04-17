@@ -5,13 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Windows;
 
 namespace PlayerView.Model
 {
     public class DateModel
     {
         private string musicPath;
-        private bool isStartPlay;
+        private bool _startBtn;
+        private bool _stopBtn;
 
         public string MusicPath
         {
@@ -22,18 +24,41 @@ namespace PlayerView.Model
             }
         }
 
-        public bool IsStartPlay
+        public bool StartBtn
         {
-            get => isStartPlay;
+            get => _startBtn;
             set
             {
-                isStartPlay = value;
+                _startBtn = value;
+            }
+        }
+        public bool StopBtn
+        {
+            get => _stopBtn;
+            set
+            {
+                _stopBtn = value;
+            }
+        }
+        public void Init()
+        {
+            if (!string.IsNullOrWhiteSpace(MusicPath) && File.Exists(MusicPath))
+            {
+                if (StartBtn)
+                    PlayMusic();
+                else if (StopBtn)
+                    StopMusic();
             }
         }
 
-        private void Initialization()
+        private void PlayMusic()
         {
+            MessageBox.Show(String.Format("Нажата кнопка PlayBtn start={0} stop={1}", StartBtn, StopBtn));
+        }
 
+        private void StopMusic()
+        {
+            MessageBox.Show(String.Format("Нажата кнопка StopBtn start={0} stop={1}", StartBtn, StopBtn));
         }
     }
 }

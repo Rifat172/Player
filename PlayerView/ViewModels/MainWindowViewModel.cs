@@ -10,9 +10,12 @@ namespace PlayerView.ViewModels
     {
         private DateModel date;
         private string _synchronizedText;
-        private bool _isFoundFile = false;
 
-        public StartCommand SetBoolCommand { get; private set; }
+        public MyCommand StartCommand { get; private set; }
+        public MyCommand StopCommand { get; private set; }
+
+        private bool startB = false;
+        private bool stopB = false;
 
         public string SynchronizedText
         {
@@ -20,7 +23,7 @@ namespace PlayerView.ViewModels
             set
             {
                 _synchronizedText = value;
-                if (IsFoundFile = File.Exists(_synchronizedText))
+                if (File.Exists(_synchronizedText))
                 {
                     date.MusicPath = _synchronizedText;
                 }
@@ -28,26 +31,36 @@ namespace PlayerView.ViewModels
             }
         }
 
-        public void SetBool()
+        public void Start()
         {
-            date.IsStartPlay = IsFoundFile;
-        }
-
-        public bool IsFoundFile
-        {
-            get { return _isFoundFile; }
-            set
+            startB = true;
+            if (stopB)
             {
-                _isFoundFile = value;
-                OnPropertyChanged(nameof(IsFoundFile));
+                stopB = false;
+                date.StopBtn = stopB;
             }
+            date.StartBtn = startB;
+            date.Init();
         }
 
+        public void Stop()
+        {
+            stopB = true;
+            if (startB)
+            {
+                startB = false;
+                date.StartBtn = startB;
+            }
+            date.StopBtn = stopB;
+            date.Init();
+        }
 
         public MainWindowViewModel()
         {
             date = new DateModel();
-            SetBoolCommand = new StartCommand(SetBool);
+
+            StartCommand = new MyCommand(Start);
+            StopCommand = new MyCommand(Stop);
         }
     }
 }

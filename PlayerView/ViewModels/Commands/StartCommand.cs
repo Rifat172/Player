@@ -7,12 +7,12 @@ using System.Windows.Input;
 
 namespace PlayerView.ViewModels.Commands
 {
-    public class StartCommand : ICommand
+    public class MyCommand : ICommand
     {
         public event EventHandler CanExecuteChanged;
         private Action _execute;
 
-        public StartCommand(Action execute)
+        public MyCommand(Action execute)
         {
             _execute = execute;
         }

@@ -16,6 +16,7 @@ namespace PlayerView.ViewModels
 
         private bool startB = false;
         private bool stopB = false;
+        private double _sliderValue;
 
         public string SynchronizedText
         {
@@ -28,6 +29,20 @@ namespace PlayerView.ViewModels
                     date.MusicPath = _synchronizedText;
                 }
                 OnPropertyChanged(nameof(SynchronizedText));
+            }
+        }
+
+        public double SliderValue
+        {
+            get => _sliderValue;
+            set
+            {
+                if(value != _sliderValue)
+                {
+                    _sliderValue = value;
+                    date.SliderVal = SliderValue;
+                    OnPropertyChanged(nameof(SliderValue));
+                }
             }
         }
 

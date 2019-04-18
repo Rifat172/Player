@@ -6,14 +6,29 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Windows;
+using System.Windows.Controls;
 
-namespace PlayerView.Model
+namespace PlayerView.Model 
 {
-    public class DateModel
+    public class DateModel : BaseViewModel
     {
         private string musicPath;
         private bool _startBtn;
         private bool _stopBtn;
+        private double _sliderVal;
+
+        public MediaElement mediaElement;
+
+        public long val = 0;
+
+
+        public DateModel()
+        {
+            musicPath = @"A:\Project\eminem_-_celebrity_(zaycev.net).mp3";
+            mediaElement = new MediaElement();
+            mediaElement.Source = new Uri(MusicPath);
+            mediaElement.UnloadedBehavior = new MediaState();
+        }
 
         public string MusicPath
         {
@@ -21,8 +36,21 @@ namespace PlayerView.Model
             set
             {
                 musicPath = value;
+                //mediaElement = new MediaElement();
+                //mediaElement.Source = new Uri(MusicPath);
+                //mediaElement.UnloadedBehavior = new MediaState();
             }
         }
+        public double SliderVal
+        {
+            get => _sliderVal;
+            set
+            {
+                _sliderVal = value;
+            }
+        }
+
+             
 
         public bool StartBtn
         {
@@ -51,14 +79,17 @@ namespace PlayerView.Model
             }
         }
 
+
         private void PlayMusic()
         {
-            MessageBox.Show(String.Format("Нажата кнопка PlayBtn start={0} stop={1}", StartBtn, StopBtn));
+            mediaElement.Play();
+
+            OnPropertyChanged(nameof(mediaElement.Position));
         }
 
         private void StopMusic()
         {
-            MessageBox.Show(String.Format("Нажата кнопка StopBtn start={0} stop={1}", StartBtn, StopBtn));
+            mediaElement.Stop();
         }
     }
 }

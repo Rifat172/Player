@@ -35,7 +35,13 @@
                     <Label Grid.Column="1" Content="last time: "/>
                 </Grid>
                 <Label Content="text"/>
-                <Slider/>
+                <Slider Value="{Binding SliderValue, Mode=TwoWay}" 
+                        Minimum="0"
+                        Maximum="100"
+                        SelectionStart="0"
+                        Height="30"
+                        IsSelectionRangeEnabled="True"
+                        ValueChanged="Slider_ValueChanged"/>
             </StackPanel>
         </Grid>
         <StackPanel Background="Black" Grid.Row="1">

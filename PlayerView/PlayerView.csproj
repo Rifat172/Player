@@ -55,7 +55,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Model\DateModel.cs" />
+    <Compile Include="Model\GeneralModel.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\Commands\StartCommand.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />

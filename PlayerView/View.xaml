@@ -23,7 +23,7 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <Button Grid.Column="0" Command="{Binding StartCommand}" Content="PlayButton" FontSize="20"/>
-                <Button Grid.Column="1" Command="{Binding StopCommand}" Content="StopButton" FontSize="20"/>
+                <Button Grid.Column="1" Command="{Binding PauseCommand}" Content="PauseButton" FontSize="20"/>
             </Grid>
 
             <StackPanel Grid.Column="1">
@@ -54,7 +54,8 @@
             <TextBox BorderBrush="Red" FontSize="20" Text="{Binding Path=SynchronizedText,
             UpdateSourceTrigger=PropertyChanged, 
             Mode=OneWayToSource}"/>
-            <Button Content="exit:)" Command="{Binding CloseApp}"/>
+            <Button Content="stop and exit" Command="{Binding CloseCommand}"/>
+            <Button Content="Checking" Command="{Binding Checking}"/>
         </StackPanel>
 
     </Grid>

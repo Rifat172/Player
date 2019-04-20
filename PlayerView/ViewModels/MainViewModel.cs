@@ -2,6 +2,7 @@
 using PlayerView.ViewModels.Commands;
 using System;
 using System.IO;
+using System.Windows;
 using System.Windows.Media;
 //A:\Project\e.mp3
 namespace PlayerView.ViewModels
@@ -13,8 +14,10 @@ namespace PlayerView.ViewModels
         private TimeSpan time;
 
         public MyCommand StartCommand { get; private set; }
-        public MyCommand StopCommand { get; private set; }
-        public MyCommand CloseApp { get; private set; }
+        public MyCommand PauseCommand { get; private set; }
+        public MyCommand CloseCommand { get; private set; }
+
+        public MyCommand Checking { get; private set; }
 
         public MainViewModel()
         {
@@ -26,8 +29,9 @@ namespace PlayerView.ViewModels
             date.SliderMaxVal = 10;
 
             StartCommand = new MyCommand(Start);
-            StopCommand = new MyCommand(Stop);
-            CloseApp = new MyCommand(ClosePlayer);
+            PauseCommand = new MyCommand(Pause);
+            CloseCommand = new MyCommand(ClosePlayer);
+            Checking = new MyCommand(CheckIsPlaying);
         }
 
         public double MaxSliderValue
@@ -40,8 +44,7 @@ namespace PlayerView.ViewModels
             }
         }
         public string SynchronizedText
-        {
-            get => date.MusicPath;
+        {//в get можно прописать date.musicpath(или как-то так) возможно в будущем понадобится 
             set
             {
                 if (File.Exists(value))
@@ -50,7 +53,7 @@ namespace PlayerView.ViewModels
                     if (inf.Extension == ".mp3")
                     {
                         date.IsFileFound = true;
-                        date.MusicPath = value;
+                        date.Player.Open(new Uri(value));
                     }
                 }
                 OnPropertyChanged(nameof(SynchronizedText));
@@ -91,24 +94,26 @@ namespace PlayerView.ViewModels
         {
             if (date.IsFileFound)
             {
-                date.Player.Open(new Uri(date.MusicPath));
                 date.Player.Play();
                 SetLastTime();
                 SetSliderMaxVal();
             }
         }
 
-        public void Stop()
+        public void Pause()
         {
             if (date.IsFileFound)
             {
-                date.Player.Stop();
+                date.Player.Pause();
             }
         }
         public void ClosePlayer()
         {
             if (date.IsFileFound)
+            {
+                date.Player.Stop();
                 date.Player.Close();
+            }
         }
 
 
@@ -127,5 +132,18 @@ namespace PlayerView.ViewModels
         {
             MaxSliderValue = Math.Round(time.TotalSeconds);
         }
+
+        private void CheckIsPlaying()
+        {
+            if (date.Player.CanPause)
+            {
+                MessageBox.Show($"CanPause = {date.Player.CanPause}");
+            }
+            else
+            {
+                MessageBox.Show($"CanPause = {date.Player.CanPause}");
+            }
+        }
     }
 }
+//A:\Project\e.mp3

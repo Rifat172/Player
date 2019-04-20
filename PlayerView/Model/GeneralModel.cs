@@ -10,7 +10,8 @@ namespace PlayerView.Model
         public string NowTime { get; set; }
         public bool IsFileFound { get; set; }
         public double SliderVal { get; set; }
+        public double SliderMaxVal { get; set; }
         public MediaPlayer Player { get; set; }
-        
+
     }
 }

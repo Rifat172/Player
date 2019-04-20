@@ -2,13 +2,11 @@
 using PlayerView.ViewModels.Commands;
 using System;
 using System.IO;
-using System.Threading;
-using System.Windows;
 using System.Windows.Media;
-//A:\Project\eminem_-_celebrity_(zaycev.net).mp3
+//A:\Project\e.mp3
 namespace PlayerView.ViewModels
 {
-    public class MainWindowViewModel : BaseViewModel
+    public class MainViewModel : BaseViewModel
     {
         private GeneralModel date;
         private FileInfo inf;
@@ -16,19 +14,31 @@ namespace PlayerView.ViewModels
 
         public MyCommand StartCommand { get; private set; }
         public MyCommand StopCommand { get; private set; }
+        public MyCommand CloseApp { get; private set; }
 
-        public MainWindowViewModel()
+        public MainViewModel()
         {
             date = new GeneralModel();
             date.Player = new MediaPlayer();
 
             date.LastTime = "LastTime: ";
-            date.NowTime = "Now: ";
+            date.NowTime = "NowTime: ";
+            date.SliderMaxVal = 10;
 
             StartCommand = new MyCommand(Start);
             StopCommand = new MyCommand(Stop);
+            CloseApp = new MyCommand(ClosePlayer);
         }
 
+        public double MaxSliderValue
+        {
+            get { return date.SliderMaxVal; }
+            set
+            {
+                date.SliderMaxVal = value;
+                OnPropertyChanged(nameof(MaxSliderValue));
+            }
+        }
         public string SynchronizedText
         {
             get => date.MusicPath;
@@ -46,40 +56,6 @@ namespace PlayerView.ViewModels
                 OnPropertyChanged(nameof(SynchronizedText));
             }
         }
-
-        public double SliderValue
-        {
-            get => date.SliderVal;
-            set
-            {
-                if (value != date.SliderVal)
-                {
-                    date.SliderVal = value;
-                    OnPropertyChanged(nameof(SliderValue));
-                }
-            }
-        }
-
-        public void Start()
-        {
-            if (date.IsFileFound)
-            {
-                date.Player.Open(new Uri(date.MusicPath));
-                date.Player.Play();
-                AudoiPlay();
-                Thread thread = new Thread(new ThreadStart(ChangeTime));
-                thread.Start();
-            }
-        }
-
-        public void Stop()
-        {
-            if (date.IsFileFound)
-            {
-                date.Player.Stop();
-            }
-        }
-
         public string LastTime
         {
             get => date.LastTime;
@@ -95,29 +71,61 @@ namespace PlayerView.ViewModels
             set
             {
                 date.NowTime = value;
-                OnPropertyChanged(nameof(LastTime));
+                OnPropertyChanged(nameof(NowTime));
             }
         }
-        private void ChangeTime()
+        public double SliderValue
         {
-            while (date.Player.Position <= time)
+            get => date.SliderVal;
+            set
             {
-                NowTime = string.Format("NowTime: " + date.Player.Position);
+                if (value != date.SliderVal)
+                {
+                    date.SliderVal = value;
+                    OnPropertyChanged(nameof(SliderValue));
+                }
             }
         }
 
-        private void AudoiPlay()
-        {//A:\Project\eminem_-_celebrity_(zaycev.net).mp3
-            
-            do
+        private void Start()
+        {
+            if (date.IsFileFound)
             {
-                if (date.Player.NaturalDuration.HasTimeSpan)
-                {
-                    time = date.Player.NaturalDuration.TimeSpan;
-                    break;
-                }
-            } while (true);
+                date.Player.Open(new Uri(date.MusicPath));
+                date.Player.Play();
+                SetLastTime();
+                SetSliderMaxVal();
+            }
+        }
+
+        public void Stop()
+        {
+            if (date.IsFileFound)
+            {
+                date.Player.Stop();
+            }
+        }
+        public void ClosePlayer()
+        {
+            if (date.IsFileFound)
+                date.Player.Close();
+        }
+
+
+
+        private void SetLastTime()
+        {//A:\Project\e.mp3
+
+            while (!date.Player.NaturalDuration.HasTimeSpan) ;
+
+            time = date.Player.NaturalDuration.TimeSpan;
+
             LastTime = string.Format("LastTime: " + time.ToString());
+        }
+
+        private void SetSliderMaxVal()
+        {
+            MaxSliderValue = Math.Round(time.TotalSeconds);
         }
     }
 }

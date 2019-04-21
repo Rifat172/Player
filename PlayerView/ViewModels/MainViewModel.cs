@@ -2,9 +2,7 @@
 using PlayerView.ViewModels.Commands;
 using System;
 using System.IO;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 using System.Windows.Threading;
 //A:\Project\e.mp3
 namespace PlayerView.ViewModels
@@ -13,20 +11,21 @@ namespace PlayerView.ViewModels
     {
         private GeneralModel date;
         private FileInfo inf;
-        private TimeSpan time;
 
+        public bool IsSliderActiv { get; set; }
         public MyCommand StartCommand { get; private set; }
         public MyCommand PauseCommand { get; private set; }
-        public MyCommand SliderCommand { get; private set; }
+
 
         public MainViewModel()
         {
             date = new GeneralModel();
             date.Player = new MediaElement();
 
-            date.LastTime = "LastTime: ";
-            date.NowTime = "NowTime: ";
-            date.SliderMaxVal = 1;
+            date.LastTime = string.Empty;
+            date.NowTime = string.Empty;
+            date.SliderMaxVal = 10;
+            date.IsFirstSetVal = true;
 
             date.Timer = new DispatcherTimer();
             date.Timer.Interval = TimeSpan.FromSeconds(0.1);
@@ -40,28 +39,74 @@ namespace PlayerView.ViewModels
             PauseCommand = new MyCommand(Pause);
         }
 
-        public void ChangTime(double value)
+        public void ChangePosition(double value)
         {
-            date.Player.Pause();
             date.Player.Position = TimeSpan.FromSeconds(value);
-            date.Player.Play();
         }
 
         private void Timer_Tick(object sender, EventArgs e)
         {
             NowTime = date.Player.Position.ToString(@"mm\:ss");
-            SliderValue = date.Player.Position.TotalSeconds;
-        }
 
-        public double MaxSliderValue
-        {
-            get { return date.SliderMaxVal; }
-            set
+            if (!IsSliderActiv)
+                SliderValue = date.Player.Position.TotalSeconds;
+
+            if (date.Player != null && SliderValue == MaxSliderValue)
             {
-                date.SliderMaxVal = value;
-                OnPropertyChanged(nameof(MaxSliderValue));
+                date.Player.Stop();
+                date.Timer.Stop();
+            }
+            if (date.Player != null && date.IsFirstSetVal)
+            {
+                SetLastTime();
+                SetSliderMaxVal();
+                date.IsFirstSetVal = false;
             }
         }
+
+        public void Start()
+        {
+            if (date.Player != null && date.IsFileFound)
+            {
+                date.Player.Play();
+                date.Timer.Start();
+                IsSliderActiv = false;
+            }
+        }
+
+        public void Pause()
+        {
+            if (date.Player != null && date.IsFileFound)
+            {
+                date.Player.Pause();
+                date.Timer.Stop();
+            }
+        }
+        public void ClosePlayer()
+        {
+            if (date.Player != null)
+            {
+                date.Player.Stop();
+                date.Player.Close();
+            }
+            if (date.Timer != null)
+                date.Timer.Stop();
+
+        }
+
+        private void SetLastTime()
+        {//A:\Project\e.mp3
+
+            while (!date.Player.NaturalDuration.HasTimeSpan) ;
+
+            LastTime = date.Player.NaturalDuration.TimeSpan.ToString(@"mm\:ss");
+        }
+
+        private void SetSliderMaxVal()
+        {
+            MaxSliderValue = date.Player.NaturalDuration.TimeSpan.TotalSeconds;
+        }
+
         public string SynchronizedText
         {//в get можно прописать date.musicpath
             set
@@ -71,8 +116,12 @@ namespace PlayerView.ViewModels
                     inf = new FileInfo(value);
                     if (inf.Extension == ".mp3")
                     {
-                        date.IsFileFound = true;
                         date.Player.Source = new Uri(value);
+                        date.IsFileFound = true;
+                    }
+                    else
+                    {
+                        date.IsFileFound = false;
                     }
                 }
                 OnPropertyChanged(nameof(SynchronizedText));
@@ -108,48 +157,17 @@ namespace PlayerView.ViewModels
                 }
             }
         }
-
-        private void Start()
+        public double MaxSliderValue
         {
-            if (date.IsFileFound)
+            get { return date.SliderMaxVal; }
+            set
             {
-                date.Player.Play();
-                date.Timer.Start();
-                SetLastTime();
-                SetSliderMaxVal();
+                date.SliderMaxVal = value;
+                OnPropertyChanged(nameof(MaxSliderValue));
             }
-        }
-
-        private void Pause()
-        {
-            if (date.IsFileFound)
-            {
-                date.Player.Pause();
-                date.Timer.Stop();
-            }
-        }
-        public void ClosePlayer()
-        {
-            date.Player.Stop();
-            date.Timer.Stop();
-            date.Player.Close();
-        }
-
-        private void SetLastTime()
-        {//A:\Project\e.mp3
-
-            while (!date.Player.NaturalDuration.HasTimeSpan) ;
-
-            time = date.Player.NaturalDuration.TimeSpan;
-
-            LastTime = string.Format("LastTime: " + time.ToString());
-        }
-
-        private void SetSliderMaxVal()
-        {
-            MaxSliderValue = date.Player.NaturalDuration.TimeSpan.TotalSeconds;
         }
     }
+
 }
 //SliderValue = date.Player.Position.TotalSeconds;
 

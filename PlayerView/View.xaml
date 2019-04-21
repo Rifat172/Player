@@ -32,8 +32,8 @@
                         <ColumnDefinition/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <Label Content="first time: 00:00:00"/>
-                    <Label Grid.Column="1" Content="{Binding LastTime}"/>
+                    <Label Content="00:00"/>
+                    <Label HorizontalAlignment="Right" Grid.Column="1" Content="{Binding LastTime}"/>
                 </Grid>
                 <Label Content="{Binding NowTime, Mode=TwoWay}"/>
                 <Slider 
@@ -43,8 +43,10 @@
                     Maximum="{Binding Path=MaxSliderValue, Mode=TwoWay}"
                     SelectionStart="0"
                     Height="30"
-                    IsSelectionRangeEnabled="True"
-                    ValueChanged="Slider_ValueChanged"/>
+                    IsSelectionRangeEnabled="True" 
+                    ValueChanged="Slider_ValueChanged"
+                    PreviewMouseUp="SliderMy_PreviewMouseUp" 
+                    PreviewMouseDown="SliderMy_PreviewMouseDown"/>
             </StackPanel>
         </Grid>
         <StackPanel Background="Black" Grid.Row="1">

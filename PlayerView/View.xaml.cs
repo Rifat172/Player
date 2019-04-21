@@ -9,15 +9,26 @@ namespace PlayerView
     /// </summary>
     public partial class View : Window
     {
+        MainViewModel viewModel;
         public View()
         {
             InitializeComponent();
             this.DataContext = new MainViewModel();
+            viewModel = (MainViewModel)DataContext;
         }
-
+        
         private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            ((Slider)sender).SelectionEnd = e.NewValue;
+            Slider slider = sender as Slider;
+            slider.SelectionEnd = e.NewValue;
+            
+            viewModel.ChangTime(slider.Value);
+        }
+
+        private void Window_Closed(object sender, System.EventArgs e)
+        {
+            viewModel.ClosePlayer();
+
         }
     }
 }

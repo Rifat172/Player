@@ -3,7 +3,9 @@ using PlayerView.ViewModels.Commands;
 using System;
 using System.IO;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Threading;
 //A:\Project\e.mp3
 namespace PlayerView.ViewModels
 {
@@ -15,23 +17,40 @@ namespace PlayerView.ViewModels
 
         public MyCommand StartCommand { get; private set; }
         public MyCommand PauseCommand { get; private set; }
-        public MyCommand CloseCommand { get; private set; }
-
-        public MyCommand Checking { get; private set; }
+        public MyCommand SliderCommand { get; private set; }
 
         public MainViewModel()
         {
             date = new GeneralModel();
-            date.Player = new MediaPlayer();
+            date.Player = new MediaElement();
 
             date.LastTime = "LastTime: ";
             date.NowTime = "NowTime: ";
-            date.SliderMaxVal = 10;
+            date.SliderMaxVal = 1;
+
+            date.Timer = new DispatcherTimer();
+            date.Timer.Interval = TimeSpan.FromSeconds(0.1);
+            date.Timer.Tick += Timer_Tick;
+
+            date.Player.LoadedBehavior = MediaState.Manual;
+            date.Player.UnloadedBehavior = MediaState.Manual;
+
 
             StartCommand = new MyCommand(Start);
             PauseCommand = new MyCommand(Pause);
-            CloseCommand = new MyCommand(ClosePlayer);
-            Checking = new MyCommand(CheckIsPlaying);
+        }
+
+        public void ChangTime(double value)
+        {
+            date.Player.Pause();
+            date.Player.Position = TimeSpan.FromSeconds(value);
+            date.Player.Play();
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            NowTime = date.Player.Position.ToString(@"mm\:ss");
+            SliderValue = date.Player.Position.TotalSeconds;
         }
 
         public double MaxSliderValue
@@ -44,7 +63,7 @@ namespace PlayerView.ViewModels
             }
         }
         public string SynchronizedText
-        {//в get можно прописать date.musicpath(или как-то так) возможно в будущем понадобится 
+        {//в get можно прописать date.musicpath
             set
             {
                 if (File.Exists(value))
@@ -53,7 +72,7 @@ namespace PlayerView.ViewModels
                     if (inf.Extension == ".mp3")
                     {
                         date.IsFileFound = true;
-                        date.Player.Open(new Uri(value));
+                        date.Player.Source = new Uri(value);
                     }
                 }
                 OnPropertyChanged(nameof(SynchronizedText));
@@ -95,28 +114,26 @@ namespace PlayerView.ViewModels
             if (date.IsFileFound)
             {
                 date.Player.Play();
+                date.Timer.Start();
                 SetLastTime();
                 SetSliderMaxVal();
             }
         }
 
-        public void Pause()
+        private void Pause()
         {
             if (date.IsFileFound)
             {
                 date.Player.Pause();
+                date.Timer.Stop();
             }
         }
         public void ClosePlayer()
         {
-            if (date.IsFileFound)
-            {
-                date.Player.Stop();
-                date.Player.Close();
-            }
+            date.Player.Stop();
+            date.Timer.Stop();
+            date.Player.Close();
         }
-
-
 
         private void SetLastTime()
         {//A:\Project\e.mp3
@@ -130,20 +147,10 @@ namespace PlayerView.ViewModels
 
         private void SetSliderMaxVal()
         {
-            MaxSliderValue = Math.Round(time.TotalSeconds);
-        }
-
-        private void CheckIsPlaying()
-        {
-            if (date.Player.CanPause)
-            {
-                MessageBox.Show($"CanPause = {date.Player.CanPause}");
-            }
-            else
-            {
-                MessageBox.Show($"CanPause = {date.Player.CanPause}");
-            }
+            MaxSliderValue = date.Player.NaturalDuration.TimeSpan.TotalSeconds;
         }
     }
 }
+//SliderValue = date.Player.Position.TotalSeconds;
+
 //A:\Project\e.mp3

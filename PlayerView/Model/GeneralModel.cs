@@ -1,4 +1,5 @@
-﻿using System.Windows.Media;
+﻿using System.Windows.Controls;
+using System.Windows.Threading;
 
 namespace PlayerView.Model
 {
@@ -10,7 +11,8 @@ namespace PlayerView.Model
         public bool IsFileFound { get; set; }
         public double SliderVal { get; set; }
         public double SliderMaxVal { get; set; }
-        public MediaPlayer Player { get; set; }
+        public MediaElement Player { get; set; }
+        public DispatcherTimer Timer { get; set; }
 
     }
 }
